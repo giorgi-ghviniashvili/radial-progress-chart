@@ -87,8 +87,8 @@
 </head>
 <body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.js"></script>
-<script src="../dist/radial-progress-chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.6.2/d3.js"></script>
+<script src="../index.js"></script>
 
 <div class="container">
   <ul class="week"></ul>
@@ -107,7 +107,7 @@
     {day: 'S'},
     {day: 'S'}
   ];
-  var dateFormatter = d3.time.format("%A, %B %d, %Y");
+  var dateFormatter = d3.timeFormat("%A, %B %d, %Y");
   var mainChart = new RadialProgressChart('.main', {
         diameter: 130,
         series: [
@@ -119,7 +119,7 @@
 
   d3.select('.week').selectAll('li')
       .data(data).enter()
-      .append('li').on('click', function (d) {
+      .append('li').on('click', function (e, d) {
         // Update active class, date and main chart
         d3.selectAll('.circle').classed('active', false);
         d3.select(this).select('.circle').classed('active', true);

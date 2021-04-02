@@ -41,7 +41,7 @@ function RadialProgressChart(query, options) {
     return radius;
   }
 
-  self.progress = d3.svg.arc()
+  self.progress = d3.arc()
     .startAngle(0)
     .endAngle(function (item) {
       return item.percentage / 100 * τ;
@@ -55,7 +55,7 @@ function RadialProgressChart(query, options) {
       return (self.options.stroke.width / 2) * m;
     });
 
-  var background = d3.svg.arc()
+  var background = d3.arc()
     .startAngle(0)
     .endAngle(τ)
     .innerRadius(innerRadius)
@@ -225,7 +225,7 @@ RadialProgressChart.prototype.update = function (data) {
       // delay between each item
       return i * self.options.animation.delay;
     })
-    .ease("elastic")
+    .ease(d3.easeElastic)
     .attrTween("d", function (item) {
       var interpolator = d3.interpolateNumber(item.fromPercentage, item.percentage);
       return function (t) {
@@ -431,12 +431,18 @@ RadialProgressChart.Gradient = (function () {
 
   Gradient.toSVGElement = function (id, options) {
     var gradientType = options.linearGradient ? 'linearGradient' : 'radialGradient';
-    var gradient = d3.select(document.createElementNS(d3.ns.prefix.svg, gradientType))
-      .attr(options[gradientType])
-      .attr('id', id);
+    var gradient = d3.select(document.createElementNS("//www.w3.org/2000/svg", gradientType)).attr('id', id);
+
+    Object.keys(options[gradientType]).forEach(key => {
+      gradient.attr(key, options[gradientType][key]);
+    });
 
     options.stops.forEach(function (stopAttrs) {
-      gradient.append("svg:stop").attr(stopAttrs);
+      const stop = gradient.append("svg:stop");
+
+      Object.keys(stopAttrs).forEach(key => {
+        stop.attr(key, stopAttrs[key]);
+      });
     });
 
     this.background = options.stops[0]['stop-color'];
